@@ -45,6 +45,7 @@ io.on('connection', socket => {
 
   //listen on typing
   socket.on('typing', (room, name) => {
+    console.log("tying server call");
     socket.to(room).broadcast.emit('typing', name)
   })
 

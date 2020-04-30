@@ -3,7 +3,7 @@ const messageContainer = document.getElementById('message-container')
 const roomContainer = document.getElementById('room-container')
 const messageForm = document.getElementById('send-container')
 const messageInput = document.getElementById('message-input')
-var feedback = $("#message-container");
+var feedback = document.getElementById("message-container");
 
 
 if (messageForm != null) {
@@ -36,7 +36,11 @@ socket.on('room-created', room => {
 })
 
 socket.on('chat-message', data => {
-  //feedback.html('');
+  //Deleteing p tag every time before data append 
+  if(document.getElementById("typ-id") != null){
+    console.log("delete")
+    document.getElementById("typ-id").remove();
+}
   appendMessage(`${data.name}: ${data.message}`)
 })
 
@@ -49,8 +53,12 @@ socket.on('user-disconnected', name => {
 })
 
 socket.on('typing', name => {
-  feedback.html("<p><i>" + name + " is typing a message..." + "</i></p>")
-  //appendMessage("User " + name + " is writing a message...");
+//beore appending typing message , removing existing typing message.
+  if(document.getElementById("typ-id") != null){
+    console.log("delete")
+    document.getElementById("typ-id").remove();
+}
+  feedback.innerHTML+="<p id='typ-id'><i>" + name + " is typing a message..." + "</i></p>"
 })
 
 function appendMessage(message) {
