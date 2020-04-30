@@ -37,15 +37,16 @@ io.on('connection', socket => {
   socket.on('new-user', (room, name) => {
     socket.join(room)
     rooms[room].users[socket.id] = name
+    console.log(rooms)
     socket.to(room).broadcast.emit('user-connected', name)
   })
+  
   socket.on('send-chat-message', (room, message) => {
     socket.to(room).broadcast.emit('chat-message', { message: message, name: rooms[room].users[socket.id] })
   })
 
   //listen on typing
   socket.on('typing', (room, name) => {
-    console.log("tying server call");
     socket.to(room).broadcast.emit('typing', name)
   })
 
