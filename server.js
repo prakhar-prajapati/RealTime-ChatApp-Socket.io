@@ -34,15 +34,19 @@ app.get('/:room', (req, res) => {
 server.listen(3000)
 
 io.on('connection', socket => {
+  console.log('connectd',socket.id)
   socket.on('new-user', (room, name) => {
     socket.join(room)
     rooms[room].users[socket.id] = name
-    console.log(rooms)
+    socket.username = name;
+    console.log(socket.username)
     socket.to(room).broadcast.emit('user-connected', name)
   })
   
   socket.on('send-chat-message', (room, message) => {
-    socket.to(room).broadcast.emit('chat-message', { message: message, name: rooms[room].users[socket.id] })
+    //Both below lines of code working properly.
+    //socket.to(room).broadcast.emit('chat-message', { message: message, name: rooms[room].users[socket.id] })
+    socket.to(room).broadcast.emit('chat-message', { message: message, name: socket.username })
   })
 
   //listen on typing
@@ -51,9 +55,11 @@ io.on('connection', socket => {
   })
 
   socket.on('disconnect', () => {
+    console.log('user disconected')
     getUserRooms(socket).forEach(room => {
       socket.to(room).broadcast.emit('user-disconnected', rooms[room].users[socket.id])
       delete rooms[room].users[socket.id]
+      delete socket.id
     })
   })
 })
